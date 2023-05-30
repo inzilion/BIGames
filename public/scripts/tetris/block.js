@@ -21,6 +21,14 @@ class Block {
     this.shapes[this.currentShapeNum].map((row, j) => row.map((cell, i) => {
       if(cell) cell.draw(ctx, {x:this.pos.x+(this.coord.i+i)*cell.size, y:this.pos.y+(this.coord.j+j)*cell.size})}))
   }
+  move(direction){
+    switch(direction){
+      case "LEFT"   : this.coord.i--; break;
+      case "RIGHT"  : this.coord.i++; break;
+      case "DOWN"   : this.coord.j++; break;
+      case "ROTATE" : this.currentShapeNum++; this.currentShapeNum %= this.shapes.length; break;
+    }
+  }
 }
 
 export default Block;
