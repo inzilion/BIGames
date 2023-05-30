@@ -90,7 +90,7 @@ const SHAPES = {
           ],
 				],      
   
-  'H' : [ 
+  'S' : [ 
 					[ 
             [1,0,0],
 						[1,1,0],
@@ -117,4 +117,6 @@ const SHAPES = {
 				],      
 }
 
-export default SHAPES;
+const randomShape = () => SHAPES[Object.keys(SHAPES)[Math.floor(Math.random()*Object.keys(SHAPES).length)]];
+
+export default randomShape;

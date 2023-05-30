@@ -1,19 +1,28 @@
 import Stage from "./stage.js";
 import Block from "./block.js";
-import SHAPES from "./shapes.js";
+import randomShape from "./shapes.js";
+import { CANVAS_WIDTH, CANVAS_HEIGHT } from "./global_variable.js";
 
 const $div = document.querySelector("#tetris")
 const $cvs = document.createElement("canvas");
-$cvs.width = 1000;
-$cvs.height = 600;
+$cvs.width = CANVAS_WIDTH;
+$cvs.height = CANVAS_HEIGHT;
 const ctx = $cvs.getContext('2d');
 $div.appendChild($cvs);
-const CELL_SIZE = 30;
 
-const s1= new Stage(ctx, {x:50,y:0}, 10, 20);
-s1.draw();
+class Tetris {
+  constructor(pos={x, y}){
+    this.pos = pos;
+    this.stage = new Stage(this.pos, 10, 20);
+    this.block = new Block(randomShape(), {i:3, j:0}, this.pos);
+  }
+  draw(ctx) {
+    this.stage.draw(ctx);
+    this.block.draw(ctx);
+  }
+}
 
-const b = new Block(SHAPES['I'], {i:0, j:2});
-console.log(b);
+const t1 = new Tetris({x:50, y:0})
+t1.draw(ctx);
 
 
