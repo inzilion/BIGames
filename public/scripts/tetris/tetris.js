@@ -24,18 +24,31 @@ class Tetris {
 
 const t1 = new Tetris({x:50, y:0})
 setInterval(() => {
-  t1.draw(ctx);  
+  t1.draw(ctx);
 }, 100);
 
+// setInterval(() => {
+//   t1.block.move('DOWN');
+// }, 1000);
 
 document.body.style.overflow = "hidden";
 
 document.addEventListener('keyup', (e)=>{
-  console.log(e.key);
   switch(e.key){
-    case 'ArrowLeft' : t1.block.move('LEFT'); break;
+    case 'ArrowLeft'  : t1.block.move('LEFT'); break;
     case 'ArrowRight' : t1.block.move('RIGHT'); break;
-    case 'ArrowDown' : t1.block.move('DOWN'); break;
-    case 'ArrowUp' : t1.block.move('ROTATE'); break;
+    case 'ArrowDown'  : t1.block.move('DOWN'); break;
+    case 'ArrowUp'    : t1.block.move('ROTATE'); break;
   }
+  if(!t1.stage.canMoveBlock(t1.block)){
+    switch(e.key){
+      case 'ArrowLeft'  : t1.block.move('RIGHT'); break;
+      case 'ArrowRight' : t1.block.move('LEFT'); break;
+      case 'ArrowDown'  : t1.block.move('UP'); break;
+      case 'ArrowUp'    : t1.block.move('ROTATE2'); break;
+    }
+  
+  }
+
+
 })
