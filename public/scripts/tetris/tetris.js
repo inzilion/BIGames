@@ -20,10 +20,9 @@ class Tetris {
     this.stage.draw(ctx);
     this.block.draw(ctx);
   }
-  copyCloneBlock(){
-    return new Block(this.block.shapes, {...this.block.coord}, {...this.block.pos}, this.block.currentShapeNum);
-  }
 }
+
+const copyBlock = (block) => new Block(block.shapes, {...block.coord}, {...block.pos}, block.currentShapeNum);
 
 const t1 = new Tetris({x:50, y:0})
 setInterval(() => {
@@ -37,13 +36,13 @@ setInterval(() => {
 document.body.style.overflow = "hidden";
 
 document.addEventListener('keydown', (e)=>{
-  const cloneBlock = t1.copyCloneBlock();
+  const cloneBlock = copyBlock(t1.block);
   switch(e.key){
     case 'ArrowLeft'  : cloneBlock.move('LEFT'); break;
     case 'ArrowRight' : cloneBlock.move('RIGHT'); break;
     case 'ArrowDown'  : cloneBlock.move('DOWN'); break;
     case 'ArrowUp'    : cloneBlock.move('ROTATE'); break;
-}
+  }
   if(t1.stage.cantMoveBlock(cloneBlock)) return;
 
   switch(e.key){
