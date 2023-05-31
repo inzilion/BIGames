@@ -47,8 +47,5 @@ document.addEventListener('keyup', (e)=>{
       case 'ArrowDown'  : t1.block.move('UP'); break;
       case 'ArrowUp'    : t1.block.move('ROTATE2'); break;
     }
-  
   }
-
-
 })

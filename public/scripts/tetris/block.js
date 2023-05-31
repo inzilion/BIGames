@@ -29,7 +29,7 @@ class Block {
       case "DOWN"    : this.coord.j++; break;
       case "UP"      : this.coord.j--; break;
       case "ROTATE"  : this.currentShapeNum++; this.currentShapeNum %= this.shapes.length; break;
-      case "ROTATE2" : this.currentShapeNum--; this.currentShapeNum %= this.shapes.length; break;
+      case "ROTATE2" : this.currentShapeNum--; this.currentShapeNum = this.currentShapeNum<0 ? this.shapes.length-1 : this.currentShapeNum; break;
     }
   }
 }
