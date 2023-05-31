@@ -10,10 +10,10 @@ const randomColor = () => {
 }
 
 class Block {
-  constructor(shapes, coord={i, j}, pos={x, y}){
+  constructor(shapes, coord={i, j}, pos={x, y}, num=0){
     this.coord = coord;
     this.pos = pos;
-    this.currentShapeNum = 0;
+    this.currentShapeNum = num;
     this.color = randomColor();
     this.shapes = shapes.map(shape=>shape.map(row=>row.map(cell=>{if (cell) return new Cell(CELL_SIZE, this.color)})));
 //    this.currentShape = this.shapes[this.currentShapeNum];
@@ -29,7 +29,6 @@ class Block {
       case "DOWN"    : this.coord.j++; break;
       case "UP"      : this.coord.j--; break;
       case "ROTATE"  : this.currentShapeNum++; this.currentShapeNum %= this.shapes.length; break;
-      case "ROTATE2" : this.currentShapeNum--; this.currentShapeNum = this.currentShapeNum<0 ? this.shapes.length-1 : this.currentShapeNum; break;
     }
   }
 }

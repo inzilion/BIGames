@@ -21,7 +21,6 @@ class Stage {
     }
     return true;
   }
-
 }
 
 export default Stage;
