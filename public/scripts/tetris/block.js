@@ -16,7 +16,6 @@ class Block {
     this.currentShapeNum = num;
     this.color = randomColor();
     this.shapes = shapes.map(shape=>shape.map(row=>row.map(cell=>{if (cell) return new Cell(CELL_SIZE, this.color)})));
-//    this.currentShape = this.shapes[this.currentShapeNum];
   }
   draw(ctx){
     this.shapes[this.currentShapeNum].map((row, j) => row.map((cell, i) => {
@@ -27,7 +26,6 @@ class Block {
       case "LEFT"    : this.coord.i--; break;
       case "RIGHT"   : this.coord.i++; break;
       case "DOWN"    : this.coord.j++; break;
-      case "UP"      : this.coord.j--; break;
       case "ROTATE"  : this.currentShapeNum++; this.currentShapeNum %= this.shapes.length; break;
     }
   }
