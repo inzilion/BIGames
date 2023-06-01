@@ -1,18 +1,18 @@
+const randomShape = require("./shapes");
 const { WebSocketServer } = require("ws");
 const wssTetris = new WebSocketServer({port : 3002});
 
-const randomColor = () => {
-  const HEX = '56789AB';
-  let color = '#';
-  for(let i=0; i<3; i++)
-    color += HEX[Math.floor(Math.random() * HEX.length)];
-  return color;
+const createShapesArr = () => {
+  return new Array(100).fill().map(e=>randomShape());
 }
 
+wssTetris.shapesArr = createShapesArr();
 
 const functionByMsgCode = {
   'ready' : (wssTetris, ws, data) => { },
-  'start' : (wssTetris, ws, data) => { },
+  'start' : (wssTetris, ws, data) => {
+    data.shapesArr = wssTetris.shapesArr;
+  },
   'direction' : (wssTetris, ws, data) => { },
 }
 

@@ -1,21 +1,13 @@
 import Cell from "./cell.js";
 import { CELL_SIZE } from "./global_variable.js";
 
-const randomColor = () => {
-  const HEX = '56789AB';
-  let color = '#';
-  for(let i=0; i<3; i++)
-    color += HEX[Math.floor(Math.random() * HEX.length)];
-  return color;
-}
-
 class Block {
-  constructor(shapes, coord={i, j}, pos={x, y}, num=0){
+  constructor(shapes, color, coord={i, j}, pos={x, y}, num=0){
+    this.shapes = shapes.map(shape=>shape.map(row=>row.map(cell=>{if (cell) return new Cell(CELL_SIZE, color)})));
+    this.color = color;
     this.coord = coord;
     this.pos = pos;
     this.currentShapeNum = num;
-    this.color = randomColor();
-    this.shapes = shapes.map(shape=>shape.map(row=>row.map(cell=>{if (cell) return new Cell(CELL_SIZE, this.color)})));
     this.move = {
       'ArrowLeft'  : () => {this.coord.i--;},
       'ArrowRight' : () => {this.coord.i++;},
