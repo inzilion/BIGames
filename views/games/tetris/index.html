@@ -1,6 +1,9 @@
 {% extends "index.html" %}  
 
-{% block mid %} 
+{% block mid %}
 <div class="container p-2 h-auto border-solid border-2 bg-slate-500" id="tetris"></div>
+{% if user %}
+<input type="hidden" id="myNick" value="{{user.nick}}"></input>
 <script type="module" src="/static/scripts/tetris/main.js"></script>
+{% endif %}
 {% endblock %}
