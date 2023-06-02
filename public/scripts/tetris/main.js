@@ -13,48 +13,69 @@ const $myNick = { value : randomColor()};  //document.querySelector('#myNick');
 
 const copyBlock = (block) => new Block(block.shapes, block.color, {...block.coord}, {...block.pos}, block.currentShapeNum);
 
-const t1 = new Tetris(ctx, $myNick.value, {x:50, y:0});
+const gm = {};  // 테트리스의 인스턴스
 
-// setInterval(() => {
-//   t1.block.move('DOWN');
-// }, 1000);
+//const t1 = new Tetris(ctx, $myNick.value, {x:50, y:0});
 
 document.body.style.overflow = "hidden";
 
 document.addEventListener('keydown', (e)=>{
-  const cloneBlock = copyBlock(t1.block);
-
+  const cloneBlock = copyBlock(gm[$myNick.value].block);
   cloneBlock.move[e.key]();
-  if(t1.stage.cantMoveBlock(cloneBlock)) return;
+  if(gm[$myNick.value].stage.cantMoveBlock(cloneBlock)) return;
   myMsgSend('direction', e.key);
-//  t1.block.move[e.key]();
 })
 
 
 const myMsgSend = (code, direction ) =>{
-  const myMsg = { 
-                  nick : $myNick.value, 
-                  code : code,
-                  direction : direction,
-                  block : null,
-                }; 
+  const myMsg = { nick : $myNick.value, code : code, direction : direction }; 
   ws.send(JSON.stringify(myMsg));
 }
 
+window.isReady = false;
+
 const functionByMsgCode = {
-  'direction' : (msg) => {t1.block.move[msg.direction]()},
-  'start'     : (msg) => {t1.start(msg.shapesArr)}
+  'direction' : (msg) => {gm[msg.nick].block.move[msg.direction]()},
+  'ready'     : (msg) => {
+    if(gm[msg.nick] !== undefined) return;
+    if(msg.nick === $myNick.value){  
+      gm[msg.nick] = new Tetris(ctx, {x:50, y:0});
+    }
+    else {                            
+      gm[msg.nick] = new Tetris(ctx, {x:650, y:0});
+      if(window.isReady)
+        ws.send(JSON.stringify({nick : $myNick.value,  code : 'ready'}));
+    }
+    gm[msg.nick].start(msg.shapesArr);
+  },
+  'countDown' : (msg) => {
+    let cnt = 5;
+    const countDownTimer = setInterval(() => {
+      ctx.clearRect(CANVAS_WIDTH/2-50, CANVAS_HEIGHT/2-75, 200, 200);
+      ctx.font = "bold 100px Arial, sans-serif";
+      ctx.fillStyle = '#ddd';
+      ctx.fillText(`${cnt}` , CANVAS_WIDTH/2-30  , CANVAS_HEIGHT/2);
+      cnt--;
+      if(cnt < 0) {
+        clearInterval(countDownTimer);
+      }
+    }, 1000);
+
+  },
 }
+
 
 const receiveMsg = (e) => {
   const msg = JSON.parse(e.data)
   console.log(msg);
-  if(msg.nick === $myNick.value)
-    functionByMsgCode[msg.code](msg);
+  functionByMsgCode[msg.code](msg);
 }
 
-window.start = () => {
-  ws.send(JSON.stringify({nick : $myNick.value,  code : 'start'}))
+
+window.ready = () => {
+  window.isReady = true;
+  ws.send(JSON.stringify({nick : $myNick.value,  code : 'ready'}))
+  document.querySelector('#ready').style.display = "none";
 }
 
 ws.onmessage = receiveMsg;

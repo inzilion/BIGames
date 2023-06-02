@@ -1,15 +1,13 @@
 import Block from "./block.js";
 import Stage from "./stage.js";
-import randomShape from "./shapes.js";
 import { randomColor } from "./global_variable.js";
 
 class Tetris {
-  constructor(ctx, user, pos={x, y}){
+  constructor(ctx, pos={x, y}){
     this.pos = pos;
     this.stage = new Stage(this.pos, 10, 20);
     this.block = null;
     this.shapesArr = null;
-    this.user = user;
     this.ctx  = ctx;
   }
   draw() {
