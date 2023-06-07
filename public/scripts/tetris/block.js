@@ -20,6 +20,12 @@ class Block {
     this.shapes[this.currentShapeNum].map((row, j) => row.map((cell, i) => {
       if(cell) cell.draw(ctx, {x:this.pos.x+(this.coord.i+i)*cell.size, y:this.pos.y+(this.coord.j+j)*cell.size})}))
   }
+  die(stage){
+    this.shapes[this.currentShapeNum].map((rows, j) => rows.map((cell, i)=>{ 
+      if(cell)
+        stage.cells[this.coord.j+j][this.coord.i+i].color = cell.color;
+    }))
+  }
 }
 
 export default Block;

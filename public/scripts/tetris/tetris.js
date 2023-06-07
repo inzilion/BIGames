@@ -8,6 +8,7 @@ class Tetris {
     this.stage = new Stage(this.pos, 10, 20);
     this.block = null;
     this.shapesArr = null;
+    this.shapesArrIdx = 0;
     this.ctx  = ctx;
   }
   draw() {
@@ -16,17 +17,16 @@ class Tetris {
       this.block.draw(this.ctx);
   }
   setBlockToTop(){
-    this.block = new Block(this.shapesArr[0], randomColor(), {i:3, j:0}, this.pos);
+    this.block = new Block(this.shapesArr[this.shapesArrIdx++], randomColor(), {i:3, j:0}, this.pos);
   }
-  start(shapesArr){
+  ready(shapesArr){
     this.shapesArr = shapesArr;
     this.setBlockToTop();
-    this.timer = setInterval(() => {
-      this.draw();
-    }, 100);
-    
+    this.draw();
   }
-  
+  start(){
+    this.stage.blockDown(this.block, this);
+  }
 }
 
 export default Tetris;

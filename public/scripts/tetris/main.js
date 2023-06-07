@@ -1,6 +1,6 @@
 import Block from "./block.js";
 import Tetris from "./tetris.js";
-import { CANVAS_WIDTH, CANVAS_HEIGHT, randomColor } from "./global_variable.js";
+import { CANVAS_WIDTH, CANVAS_HEIGHT, randomColor, copyBlock } from "./global_variable.js";
 
 const ws = new WebSocket("ws://localhost:3002");
 const $div = document.querySelector("#tetris");
@@ -11,11 +11,15 @@ const ctx = $cvs.getContext('2d');
 $div.appendChild($cvs);
 const $myNick = { value : randomColor()};  //document.querySelector('#myNick');
 
-const copyBlock = (block) => new Block(block.shapes, block.color, {...block.coord}, {...block.pos}, block.currentShapeNum);
-
 const gm = {};  // 테트리스의 인스턴스
 
-//const t1 = new Tetris(ctx, $myNick.value, {x:50, y:0});
+const gameStart = () => {
+  Object.keys(gm).map(nick => gm[nick].start());
+  
+  setInterval(()=>{
+    Object.keys(gm).map(nick => gm[nick].draw());
+  }, 100);
+}
 
 document.body.style.overflow = "hidden";
 
@@ -46,10 +50,10 @@ const functionByMsgCode = {
       if(window.isReady)
         ws.send(JSON.stringify({nick : $myNick.value,  code : 'ready'}));
     }
-    gm[msg.nick].start(msg.shapesArr);
+    gm[msg.nick].ready(msg.shapesArr);
   },
   'countDown' : (msg) => {
-    let cnt = 5;
+    let cnt = 2;
     const countDownTimer = setInterval(() => {
       ctx.clearRect(CANVAS_WIDTH/2-50, CANVAS_HEIGHT/2-75, 200, 200);
       ctx.font = "bold 100px Arial, sans-serif";
@@ -58,6 +62,8 @@ const functionByMsgCode = {
       cnt--;
       if(cnt < 0) {
         clearInterval(countDownTimer);
+        ctx.clearRect(CANVAS_WIDTH/2-50, CANVAS_HEIGHT/2-75, 200, 200);
+        gameStart();
       }
     }, 1000);
 

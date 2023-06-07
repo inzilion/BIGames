@@ -1,5 +1,6 @@
 import Cell from './cell.js';
-import { CELL_SIZE } from './global_variable.js';
+import { CELL_SIZE, copyBlock } from './global_variable.js';
+import Tetris from './tetris.js';
 
 class Stage {
   constructor(pos={x, y}, rows, cols){ 
@@ -17,9 +18,24 @@ class Stage {
         if(block.shapes[block.currentShapeNum][j][i] == undefined) continue;
         if(block.coord.i+i<0 || block.coord.i+i>=this.rows || block.coord.j+j<0 || block.coord.j+j>=this.cols)
           return true;
+        if(this.cells[block.coord.j+j][block.coord.i+i].color !== '#444') return true;
       }
     }
     return false;
+  }
+  blockDown(block, tetris){
+    const timer = setInterval(()=>{
+      const cloneBlock = copyBlock(block);
+      cloneBlock.move['ArrowDown']();
+      if(this.cantMoveBlock(cloneBlock)){
+        block.die(this);
+        tetris.setBlockToTop();
+        clearInterval(timer);
+        this.blockDown(tetris.block, tetris);
+      }
+      else 
+        block.move['ArrowDown']();
+    }, 1000)
   }
 }
 
