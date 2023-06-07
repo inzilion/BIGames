@@ -1,6 +1,6 @@
 import Block from "./block.js";
 import Stage from "./stage.js";
-import { randomColor } from "./global_variable.js";
+import { randomColor, copyBlock } from "./global_variable.js";
 
 class Tetris {
   constructor(ctx, pos={x, y}){
@@ -25,7 +25,16 @@ class Tetris {
     this.draw();
   }
   start(){
-    this.stage.blockDown(this.block, this);
+    setInterval(()=>{
+      let cloneBlock = copyBlock(this.block);
+      cloneBlock.move['ArrowDown']();
+      if(this.stage.cantMoveBlock(cloneBlock)){
+        this.block.die(this.stage);
+        this.setBlockToTop();
+      }
+      else 
+        this.block.move['ArrowDown']();
+    }, 1000)
   }
 }
 
