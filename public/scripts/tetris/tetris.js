@@ -10,6 +10,7 @@ class Tetris {
     this.shapesArr = null;
     this.shapesArrIdx = 0;
     this.ctx  = ctx;
+    this.isAlive = false;
   }
   draw() {
     this.stage.draw(this.ctx);
@@ -40,17 +41,20 @@ class Tetris {
     this.draw();
   }
   start(){
+    this.isAlive = true;
+    console.log('start');
     this.timer = setInterval(()=>{
       if(this.cantMoveBlock(this.block, 'ArrowDown')){
         this.block.die(this.stage);
         this.setBlockToTop();
       }
-      else 
+      else  
         this.block.move['ArrowDown']();
       this.draw();
     }, 1000)
   }
   end(){
+    this.isAlive = false;
     clearInterval(this.timer);
   }
 }

@@ -1,6 +1,7 @@
 const randomShape = require("./shapes");
 const { WebSocketServer } = require("ws");
 const wss = require("./acidRain");
+//const wss = require("./acidRain");
 const wssTetris = new WebSocketServer({port : 3002});
 
 const createShapesArr = () => {
@@ -8,13 +9,13 @@ const createShapesArr = () => {
 }
 
 wssTetris.shapesArr = createShapesArr();
-wssTetris.executeCountDown = true;
+wssTetris.readyCnt = 0;
 
 const functionByMsgCode = {
   'ready' : (wssTetris, ws, data) => {
     data.shapesArr = wssTetris.shapesArr;
-    if(wssTetris.clients.size === 2 && wssTetris.executeCountDown){
-      wssTetris.executeCountDown = false;
+    wssTetris.readyCnt++;
+    if(wssTetris.readyCnt >= 3){
       setTimeout(()=>{
         for(client of wssTetris.clients)
           client.send(JSON.stringify({code:'countDown'}));
@@ -37,7 +38,8 @@ wssTetris.on("connection", (ws) =>{
     
     functionByMsgCode[dataJson.code](wssTetris, ws, dataJson);
 
-    console.log(dataJson);
+    console.log(dataJson, wssTetris.readyCnt);
+
 
     for(client of wssTetris.clients){
       client.send(JSON.stringify(dataJson));

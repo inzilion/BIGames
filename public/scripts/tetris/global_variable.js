@@ -9,5 +9,3 @@ export const randomColor = () => {
     color += HEX[Math.floor(Math.random() * HEX.length)];
   return color;
 }
-
-//export const copyBlock = (block) => new Block(block.shapes, block.color, {...block.coord}, {...block.pos}, block.currentShapeNum);

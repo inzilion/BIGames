@@ -10,15 +10,30 @@ const ctx = $cvs.getContext('2d');
 $div.appendChild($cvs);
 const $myNick = { value : randomColor()};  //document.querySelector('#myNick');
 
-const gm = {
-              players : {}, 
-              isGameStart : false, 
-              isReady : false, 
-              gameStart  : () => {
-                                    gm.isGameStart = true;
-                                    Object.keys(gm.players).map(nick => gm.players[nick].start());
-                                  },
+class GameManager {
+  constructor(){
+    this.players = {};
+    this.isGameStart = false;
+    this.isReady = false;
+  }
+  gameStart(){
+    this.isGameStart = true;
+    Object.keys(this.players).map(nick => this.players[nick].start());
+    console.log(this.players);
+  }
+  monitor(){
+    this.timer = setInterval(() => {
+      Object.keys(gm.players).map(nick => {
+        if(!gm.players[nick].isAlive)  
+          this.gameEnd();});
+      }, 100);
+  }
+  gameEnd(){
+    myMsgSend('end', 'end');
+  }
 }
+
+const gm = new GameManager();
 
 document.body.style.overflow = "hidden";
 
@@ -62,6 +77,7 @@ const functionByMsgCode = {
       }
     }, 1000);
   },
+  'end' : (msg) => document.querySelector('#ready').style.display = "block",
 }
 
 const receiveMsg = (e) => {
