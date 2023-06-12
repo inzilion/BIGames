@@ -1,4 +1,3 @@
-import Block from "./block.js";
 import Tetris from "./tetris.js";
 import { CANVAS_WIDTH, CANVAS_HEIGHT, randomColor, copyBlock } from "./global_variable.js";
 
@@ -11,46 +10,44 @@ const ctx = $cvs.getContext('2d');
 $div.appendChild($cvs);
 const $myNick = { value : randomColor()};  //document.querySelector('#myNick');
 
-const gm = {};  // 테트리스의 인스턴스
-
-const gameStart = () => {
-  Object.keys(gm).map(nick => gm[nick].start());
-  
-  setInterval(()=>{
-    Object.keys(gm).map(nick => gm[nick].draw());
-  }, 100);
+const gm = {
+              players : {}, 
+              isGameStart : false, 
+              isReady : false, 
+              gameStart  : () => {
+                                    gm.isGameStart = true;
+                                    Object.keys(gm.players).map(nick => gm.players[nick].start());
+                                  },
 }
 
 document.body.style.overflow = "hidden";
 
 document.addEventListener('keydown', (e)=>{
-  const cloneBlock = copyBlock(gm[$myNick.value].block);
+  const cloneBlock = copyBlock(gm.players[$myNick.value].block);
   cloneBlock.move[e.key]();
-  if(gm[$myNick.value].stage.cantMoveBlock(cloneBlock)) return;
-  myMsgSend('direction', e.key);
-})
-
+  if(gm.players[$myNick.value].stage.cantMoveBlock(cloneBlock)) return;
+  if(gm.isGameStart)
+    myMsgSend('direction', e.key);
+})  
 
 const myMsgSend = (code, direction ) =>{
   const myMsg = { nick : $myNick.value, code : code, direction : direction }; 
   ws.send(JSON.stringify(myMsg));
 }
 
-window.isReady = false;
-
 const functionByMsgCode = {
-  'direction' : (msg) => {gm[msg.nick].block.move[msg.direction]()},
+  'direction' : (msg) => {gm.players[msg.nick].block.move[msg.direction]()},
   'ready'     : (msg) => {
-    if(gm[msg.nick] !== undefined) return;
+    if(gm.players[msg.nick] !== undefined) return;
     if(msg.nick === $myNick.value){  
-      gm[msg.nick] = new Tetris(ctx, {x:50, y:0});
+      gm.players[msg.nick] = new Tetris(ctx, {x:50, y:0});
     }
     else {                            
-      gm[msg.nick] = new Tetris(ctx, {x:650, y:0});
-      if(window.isReady)
+      gm.players[msg.nick] = new Tetris(ctx, {x:650, y:0});
+      if(gm.isReady)
         ws.send(JSON.stringify({nick : $myNick.value,  code : 'ready'}));
     }
-    gm[msg.nick].ready(msg.shapesArr);
+    gm.players[msg.nick].ready(msg.shapesArr);
   },
   'countDown' : (msg) => {
     let cnt = 2;
@@ -63,23 +60,21 @@ const functionByMsgCode = {
       if(cnt < 0) {
         clearInterval(countDownTimer);
         ctx.clearRect(CANVAS_WIDTH/2-50, CANVAS_HEIGHT/2-75, 200, 200);
-        gameStart();
+        gm.gameStart();
       }
     }, 1000);
-
   },
 }
-
 
 const receiveMsg = (e) => {
   const msg = JSON.parse(e.data)
   console.log(msg);
   functionByMsgCode[msg.code](msg);
+  Object.keys(gm.players).map(nick => gm.players[nick].draw());
 }
 
-
 window.ready = () => {
-  window.isReady = true;
+  gm.isReady = true;
   ws.send(JSON.stringify({nick : $myNick.value,  code : 'ready'}))
   document.querySelector('#ready').style.display = "none";
 }

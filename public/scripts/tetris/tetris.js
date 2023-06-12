@@ -34,6 +34,7 @@ class Tetris {
       }
       else 
         this.block.move['ArrowDown']();
+      this.draw();
     }, 1000)
   }
 }
