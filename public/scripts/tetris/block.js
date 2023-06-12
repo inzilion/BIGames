@@ -26,6 +26,9 @@ class Block {
         stage.cells[this.coord.j+j][this.coord.i+i].color = cell.color;
     }))
   }
+  clone(){
+    return new Block(this.shapes, this.color, {...this.coord}, {...this.pos}, this.currentShapeNum);
+  }
 }
 
 export default Block;

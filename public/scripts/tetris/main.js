@@ -1,5 +1,5 @@
 import Tetris from "./tetris.js";
-import { CANVAS_WIDTH, CANVAS_HEIGHT, randomColor, copyBlock } from "./global_variable.js";
+import { CANVAS_WIDTH, CANVAS_HEIGHT, randomColor } from "./global_variable.js";
 
 const ws = new WebSocket("ws://localhost:3002");
 const $div = document.querySelector("#tetris");
@@ -23,9 +23,7 @@ const gm = {
 document.body.style.overflow = "hidden";
 
 document.addEventListener('keydown', (e)=>{
-  const cloneBlock = copyBlock(gm.players[$myNick.value].block);
-  cloneBlock.move[e.key]();
-  if(gm.players[$myNick.value].stage.cantMoveBlock(cloneBlock)) return;
+  if(gm.players[$myNick.value].cantMoveBlock(gm.players[$myNick.value].block, e.key)) return;
   if(gm.isGameStart)
     myMsgSend('direction', e.key);
 })  

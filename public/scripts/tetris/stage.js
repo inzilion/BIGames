@@ -11,17 +11,6 @@ class Stage {
   draw(ctx){
     this.cells.map((rows, j) => rows.map((cell, i) => cell.draw(ctx, {x : this.pos.x + i*cell.size , y : this.pos.y + j*cell.size})))
   }
-  cantMoveBlock(block){
-    for(let j=0; j<block.shapes[block.currentShapeNum].length; j++){
-      for(let i=0; i<block.shapes[block.currentShapeNum][j].length; i++){
-        if(block.shapes[block.currentShapeNum][j][i] == undefined)        continue;
-        if(block.coord.i+i<0 || block.coord.i+i>=this.rows)               return true; 
-        if(block.coord.j+j<0 || block.coord.j+j>=this.cols)               return true;
-        if(this.cells[block.coord.j+j][block.coord.i+i].color !== '#444') return true;
-      }
-    }
-    return false;
-  }
 }
 
 export default Stage;

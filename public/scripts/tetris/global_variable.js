@@ -10,4 +10,4 @@ export const randomColor = () => {
   return color;
 }
 
-export const copyBlock = (block) => new Block(block.shapes, block.color, {...block.coord}, {...block.pos}, block.currentShapeNum);
+//export const copyBlock = (block) => new Block(block.shapes, block.color, {...block.coord}, {...block.pos}, block.currentShapeNum);
