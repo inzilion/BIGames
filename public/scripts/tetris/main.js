@@ -34,7 +34,7 @@ class GameManager {
       Object.keys(gm.players).map(nick => {
         if(!gm.players[nick].isAlive)  
           this.gameEnd();
-        if(gm.players[nick].msg && nick == $myNick.value){
+        if(gm.players[nick].msg != null && nick == $myNick.value){
           myMsgSend('attack', gm.players[nick].msg);
           gm.players[nick].msg = null;
         }
@@ -70,7 +70,7 @@ const myMsgSend = (code, direction ) =>{
 const functionByMsgCode = {
   'attack'    : (msg) => {
     Object.keys(gm.players).map(nick => {
-      if(nick != $myNick.value)
+      if(nick != msg.nick)
         gm.players[nick].stage.addPenaltyRows(msg.direction);
     });
   },
