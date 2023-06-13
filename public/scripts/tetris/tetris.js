@@ -22,7 +22,7 @@ class Tetris {
     block.move[direction]();
     for(let j=0; j<block.shapes[block.currentShapeNum].length; j++){
       for(let i=0; i<block.shapes[block.currentShapeNum][j].length; i++){
-        if(block.shapes[block.currentShapeNum][j][i] == undefined)        continue;
+        if(block.shapes[block.currentShapeNum][j][i] == undefined)              continue;
         if(block.coord.i+i<0 || block.coord.i+i>=this.stage.rows)               return true; 
         if(block.coord.j+j<0 || block.coord.j+j>=this.stage.cols)               return true;
         if(this.stage.cells[block.coord.j+j][block.coord.i+i].color !== '#444') return true;
@@ -33,7 +33,7 @@ class Tetris {
   setBlockToTop(){
     this.block = new Block(this.shapesArr[this.shapesArrIdx++], randomColor(), {i:3, j:0}, this.pos);
     if(this.cantMoveBlock(this.block, 'ArrowDown'))
-      this.end();
+      this.isAlive = false;
   }
   ready(shapesArr){
     this.shapesArr = shapesArr;

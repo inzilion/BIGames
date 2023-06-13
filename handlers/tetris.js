@@ -8,14 +8,18 @@ const createShapesArr = () => {
   return new Array(100).fill().map(e=>randomShape());
 }
 
-wssTetris.shapesArr = createShapesArr();
-wssTetris.readyCnt = 0;
+const init = () => {
+  wssTetris.shapesArr = createShapesArr();
+  wssTetris.readyCnt = 0;
+}
+
+init();
 
 const functionByMsgCode = {
   'ready' : (wssTetris, ws, data) => {
     data.shapesArr = wssTetris.shapesArr;
     wssTetris.readyCnt++;
-    if(wssTetris.readyCnt >= 3){
+    if(wssTetris.readyCnt >= 2){
       setTimeout(()=>{
         for(client of wssTetris.clients)
           client.send(JSON.stringify({code:'countDown'}));
@@ -23,6 +27,7 @@ const functionByMsgCode = {
     }
   },  
   'direction' : (wssTetris, ws, data) => {},
+  'end' : (wssTetris, ws, data) => init(),
 }
 
 wssTetris.on("connection", (ws) =>{

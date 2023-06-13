@@ -16,10 +16,16 @@ class GameManager {
     this.isGameStart = false;
     this.isReady = false;
   }
+  init(){
+    this.players = {};
+    this.isGameStart = false;
+    this.isReady = false;
+  }
   gameStart(){
+    if(this.isGameStart) return ;
     this.isGameStart = true;
     Object.keys(this.players).map(nick => this.players[nick].start());
-    console.log(this.players);
+    this.monitor();
   }
   monitor(){
     this.timer = setInterval(() => {
@@ -30,6 +36,8 @@ class GameManager {
   }
   gameEnd(){
     myMsgSend('end', 'end');
+    clearInterval(this.timer);
+    Object.keys(this.players).map(nick => this.players[nick].end())    
   }
 }
 
@@ -77,7 +85,10 @@ const functionByMsgCode = {
       }
     }, 1000);
   },
-  'end' : (msg) => document.querySelector('#ready').style.display = "block",
+  'end' : (msg) => {
+    document.querySelector('#ready').style.display = "block";
+    gm.init();
+  },
 }
 
 const receiveMsg = (e) => {
