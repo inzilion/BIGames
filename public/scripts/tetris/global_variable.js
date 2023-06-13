@@ -2,7 +2,7 @@ import Block from "./block.js";
 export const AIR           = '#444';
 export const CELL_SIZE     = 30;
 export const CANVAS_WIDTH  = 1000;
-export const CANVAS_HEIGHT = 600;
+export const CANVAS_HEIGHT = 700;
 export const randomColor = () => {
   const HEX = '56789AB';
   let color = '#';

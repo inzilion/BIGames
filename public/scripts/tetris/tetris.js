@@ -3,7 +3,8 @@ import Stage from "./stage.js";
 import { randomColor, AIR } from "./global_variable.js";
 
 class Tetris {
-  constructor(ctx, pos={x, y}){
+  constructor(nick, ctx, pos={x, y}){
+    this.nick = nick;
     this.pos = pos;
     this.stage = new Stage(this.pos, 10, 20);
     this.block = null;
@@ -18,6 +19,9 @@ class Tetris {
     this.stage.draw(this.ctx);
     if(this.block)
       this.block.draw(this.ctx);
+    this.ctx.font = "bold 42px Arial, sans-serif";
+    this.ctx.fillStyle = '#ddd';
+    this.ctx.fillText(this.nick , this.pos.x+100 , this.pos.y-10);
   }
   
   cantMoveBlock(originBlock, direction){

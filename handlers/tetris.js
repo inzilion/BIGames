@@ -1,7 +1,5 @@
 const randomShape = require("./shapes");
 const { WebSocketServer } = require("ws");
-const wss = require("./acidRain");
-//const wss = require("./acidRain");
 const wssTetris = new WebSocketServer({port : 3002});
 
 const createShapesArr = () => {
@@ -12,6 +10,9 @@ const init = () => {
   wssTetris.shapesArr = createShapesArr();
   wssTetris.readyCnt = 0;
 }
+
+const room = new Array(10).fill(new Array(2).fill(undefined));
+console.log(room);
 
 init();
 

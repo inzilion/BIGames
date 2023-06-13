@@ -74,19 +74,22 @@ const functionByMsgCode = {
         gm.players[nick].stage.addPenaltyRows(msg.direction);
     });
   },
+
   'direction' : (msg) => {gm.players[msg.nick].block.move[msg.direction]()},
+  
   'ready'     : (msg) => {
     if(gm.players[msg.nick] !== undefined) return;
     if(msg.nick === $myNick.value){  
-      gm.players[msg.nick] = new Tetris(ctx, {x:50, y:0});
+      gm.players[msg.nick] = new Tetris(msg.nick, ctx, {x:50, y:50});
     }
     else {                            
-      gm.players[msg.nick] = new Tetris(ctx, {x:650, y:0});
+      gm.players[msg.nick] = new Tetris(msg.nick, ctx, {x:650, y:50});
       if(gm.isReady)
         ws.send(JSON.stringify({nick : $myNick.value,  code : 'ready'}));
     }
     gm.players[msg.nick].ready(msg.shapesArr);
   },
+  
   'countDown' : (msg) => {
     let cnt = 2;
     const countDownTimer = setInterval(() => {
@@ -102,6 +105,7 @@ const functionByMsgCode = {
       }
     }, 1000);
   },
+  
   'end' : (msg) => {
     document.querySelector('#ready').style.display = "block";
     gm.init();
