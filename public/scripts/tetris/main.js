@@ -1,8 +1,8 @@
 import Tetris from "./tetris.js";
 import { CANVAS_WIDTH, CANVAS_HEIGHT, randomColor } from "./global_variable.js";
 
-//const ws = new WebSocket("ws://localhost:3002");
-const ws = new WebSocket("ws://10.94.121.10:3002");
+const ws = new WebSocket("ws://localhost:3002");
+//const ws = new WebSocket("ws://10.94.121.10:3002");
 const $div = document.querySelector("#tetris");
 const $cvs = document.createElement("canvas");
 $cvs.width = CANVAS_WIDTH;

@@ -2,7 +2,7 @@ import Cell from "./cell.js";
 import { CELL_SIZE } from "./global_variable.js";
 
 class Block {
-  constructor(shapes, color, coord={j, i}, pos={x, y}, num=0){
+  constructor(shapes, color, coord={i, j}, pos={x, y}, num=0){
     this.shapes = shapes.map(shape=>shape.map(row=>row.map(cell=>{if (cell) return new Cell(CELL_SIZE, color)})));
     this.color = color;
     this.coord = coord;

@@ -6,7 +6,7 @@ class Tetris {
   constructor(nick, ctx, pos={x, y}){
     this.nick = nick;
     this.pos = pos;
-    this.stage = new Stage(this.pos, 10, 20);
+    this.stage = new Stage(this.pos, 20, 10);
     this.block = null;
     this.shapesArr = null;
     this.shapesArrIdx = 0;
@@ -31,8 +31,8 @@ class Tetris {
       for(let j=0; j<block.shapes[block.currentShapeNum][i].length; j++){
         try {
           if(block.shapes[block.currentShapeNum][i][j] == undefined)              continue;
-          if(block.coord.i+i<0 || block.coord.i+i>=this.stage.cols)               return true; 
-          if(block.coord.j+j<0 || block.coord.j+j>=this.stage.rows)               return true;
+          if(block.coord.i+i<0 || block.coord.i+i>=this.stage.rows)               return true; 
+          if(block.coord.j+j<0 || block.coord.j+j>=this.stage.cols)               return true;
           if(this.stage.cells[block.coord.i+i][block.coord.j+j].color !== AIR) return true;
         } catch {
           console.log('Move error');
@@ -50,9 +50,9 @@ class Tetris {
 
   checkMadeLine(){
     let removeLineNum = [];
-    for (let i=0; i<this.stage.cols; i++){
+    for (let i=0; i<this.stage.rows; i++){
       let sumOfAir = 0;
-      for (let j=0; j<this.stage.rows; j++)
+      for (let j=0; j<this.stage.cols; j++)
         try {
           if(this.stage.cells[i][j].color == AIR) sumOfAir++; 
         } catch {
