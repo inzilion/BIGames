@@ -26,6 +26,7 @@ const functionByMsgCode = {
       }, 3000);
     }
   },  
+  'attack' : (wssTetris, ws, data) => {},
   'direction' : (wssTetris, ws, data) => {},
   'end' : (wssTetris, ws, data) => init(),
 }

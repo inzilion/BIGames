@@ -23,7 +23,11 @@ class Block {
   die(stage){
     this.shapes[this.currentShapeNum].map((rows, i) => rows.map((cell, j)=>{ 
       if(cell)
-        stage.cells[this.coord.i+i][this.coord.j+j].color = cell.color;
+        try{
+          stage.cells[this.coord.i+i][this.coord.j+j].color = cell.color;
+        } catch {
+          console.log('die error');
+        }
     }))
   }
   clone(){

@@ -11,6 +11,7 @@ class Tetris {
     this.shapesArrIdx = 0;
     this.ctx  = ctx;
     this.isAlive = false;
+    this.msg = null;
   }
   
   draw() {
@@ -24,10 +25,14 @@ class Tetris {
     block.move[direction]();
     for(let i=0; i<block.shapes[block.currentShapeNum].length; i++){
       for(let j=0; j<block.shapes[block.currentShapeNum][i].length; j++){
-        if(block.shapes[block.currentShapeNum][i][j] == undefined)              continue;
-        if(block.coord.i+i<0 || block.coord.i+i>=this.stage.cols)               return true; 
-        if(block.coord.j+j<0 || block.coord.j+j>=this.stage.rows)               return true;
-        if(this.stage.cells[block.coord.i+i][block.coord.j+j].color !== '#444') return true;
+        try {
+          if(block.shapes[block.currentShapeNum][i][j] == undefined)              continue;
+          if(block.coord.i+i<0 || block.coord.i+i>=this.stage.cols)               return true; 
+          if(block.coord.j+j<0 || block.coord.j+j>=this.stage.rows)               return true;
+          if(this.stage.cells[block.coord.i+i][block.coord.j+j].color !== AIR) return true;
+        } catch {
+          console.log('Move error');
+        }
       }
     }
     return false;
@@ -44,15 +49,20 @@ class Tetris {
     for (let i=0; i<this.stage.cols; i++){
       let sumOfAir = 0;
       for (let j=0; j<this.stage.rows; j++)
-        if(this.stage.cells[i][j].color == AIR) sumOfAir++; 
+        try {
+          if(this.stage.cells[i][j].color == AIR) sumOfAir++; 
+        } catch {
+          console.log('Line error');
+        }
       if(sumOfAir == 0)  removeLineNum.push(i)
     }
     
     if (removeLineNum.length == 0) return;
+    
     removeLineNum = removeLineNum.map((e, i)=>e-i);
     removeLineNum.map(i => this.stage.cells.splice(i))
     this.stage.addRows(removeLineNum.length);
-    console.log(this.stage.cells);
+    if (removeLineNum.length >=2) this.msg = removeLineNum.length;
   }
 
   ready(shapesArr){

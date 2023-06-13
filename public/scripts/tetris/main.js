@@ -1,7 +1,8 @@
 import Tetris from "./tetris.js";
 import { CANVAS_WIDTH, CANVAS_HEIGHT, randomColor } from "./global_variable.js";
 
-const ws = new WebSocket("ws://localhost:3002");
+//const ws = new WebSocket("ws://localhost:3002");
+const ws = new WebSocket("ws://10.94.121.10:3002");
 const $div = document.querySelector("#tetris");
 const $cvs = document.createElement("canvas");
 $cvs.width = CANVAS_WIDTH;
@@ -11,12 +12,13 @@ $div.appendChild($cvs);
 const $myNick = { value : randomColor()};  //document.querySelector('#myNick');
 
 class GameManager {
-  constructor(){
-    this.players = {};
+  constructor(){ 
+    this.players = {}; 
     this.isGameStart = false;
     this.isReady = false;
   }
   init(){
+    Object.keys(this.players).map(nick => this.players[nick].end());
     this.players = {};
     this.isGameStart = false;
     this.isReady = false;
@@ -31,8 +33,13 @@ class GameManager {
     this.timer = setInterval(() => {
       Object.keys(gm.players).map(nick => {
         if(!gm.players[nick].isAlive)  
-          this.gameEnd();});
-      }, 100);
+          this.gameEnd();
+        if(gm.players[nick].msg && nick == $myNick.value){
+          myMsgSend('attack', gm.players[nick].msg);
+          gm.players[nick].msg = null;
+        }
+      });
+    }, 100);
   }
   gameEnd(){
     myMsgSend('end', 'end');
@@ -46,9 +53,13 @@ const gm = new GameManager();
 document.body.style.overflow = "hidden";
 
 document.addEventListener('keydown', (e)=>{
-  if(gm.players[$myNick.value].cantMoveBlock(gm.players[$myNick.value].block, e.key)) return;
-  if(gm.isGameStart)
-    myMsgSend('direction', e.key);
+  try {
+    if(gm.players[$myNick.value].cantMoveBlock(gm.players[$myNick.value].block, e.key)) return;
+    if(gm.isGameStart)
+      myMsgSend('direction', e.key);
+  } catch{
+    console.log('key error');
+  }
 })  
 
 const myMsgSend = (code, direction ) =>{
@@ -57,6 +68,12 @@ const myMsgSend = (code, direction ) =>{
 }
 
 const functionByMsgCode = {
+  'attack'    : (msg) => {
+    Object.keys(gm.players).map(nick => {
+      if(nick != $myNick.value)
+        gm.players[nick].stage.addPenaltyRows(msg.direction);
+    });
+  },
   'direction' : (msg) => {gm.players[msg.nick].block.move[msg.direction]()},
   'ready'     : (msg) => {
     if(gm.players[msg.nick] !== undefined) return;
