@@ -14,7 +14,6 @@ class Tetris {
     this.isAlive = false;
     this.msg = null;
   }
-  
   draw() {
     this.stage.draw(this.ctx);
     if(this.block)
@@ -40,7 +39,7 @@ class Tetris {
   
   setBlockToTop(){
     this.block = new Block(this.shapesArr[this.shapesArrIdx++], randomColor(), {i:0, j:3}, this.pos);
-    if(this.cantMoveBlock(this.block, 'ArrowDown'))
+    if(this.cantMoveBlock(this.block, 'Down'))
       this.isAlive = false;
   }
 
@@ -66,23 +65,39 @@ class Tetris {
     this.setBlockToTop();
     this.draw();
   }
+  
   start(){
     this.isAlive = true;
     this.timer = setInterval(()=>{
-      if(this.cantMoveBlock(this.block, 'ArrowDown')){
+      if(this.cantMoveBlock(this.block, 'Down')){
         this.block.die(this.stage);
         this.block = null; 
         this.checkMadeLine();
         this.setBlockToTop();
       }
       else  
-        this.block.move['ArrowDown']();
+        this.block.move['Down']();
       this.draw();
     }, 1000)
   }
+  
   end(){
     this.isAlive = false;
     clearInterval(this.timer);
+  }
+  
+  showResult(text, color){
+    this.ctx.font = "bold 70px Arial, sans-serif";
+    this.ctx.fillStyle = color;
+    this.ctx.fillText(text , this.pos.x+80 , this.pos.y+300);
+  }
+  
+  win(){
+    this.showResult('Win', '#fff');
+  }
+  
+  lose(){
+    this.showResult('Lose', '#000');
   }
 }
 

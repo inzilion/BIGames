@@ -9,7 +9,7 @@ $cvs.width = CANVAS_WIDTH;
 $cvs.height = CANVAS_HEIGHT;
 const ctx = $cvs.getContext('2d');
 $div.appendChild($cvs);
-const $myNick = { value : randomColor()};  //document.querySelector('#myNick');
+const $myNick = { value : randomColor() };  //document.querySelector('#myNick');
 
 class GameManager {
   constructor(){ 
@@ -32,8 +32,9 @@ class GameManager {
   monitor(){
     this.timer = setInterval(() => {
       Object.keys(gm.players).map(nick => {
-        if(!gm.players[nick].isAlive)  
-          this.gameEnd();
+        if(!gm.players[nick].isAlive){  
+          this.gameEnd(nick);
+        }
         if(gm.players[nick].msg != null && nick == $myNick.value){
           myMsgSend('attack', gm.players[nick].msg);
           gm.players[nick].msg = null;
@@ -41,8 +42,8 @@ class GameManager {
       });
     }, 100);
   }
-  gameEnd(){
-    myMsgSend('end', 'end');
+  gameEnd(nick){
+    myMsgSend('end', nick);
     clearInterval(this.timer);
     Object.keys(this.players).map(nick => this.players[nick].end())    
   }
@@ -58,7 +59,7 @@ document.addEventListener('keydown', (e)=>{
     if(gm.isGameStart)
       myMsgSend('direction', e.key);
   } catch{
-    console.log('key error');
+    console.log('방향키만 먹어요');
   }
 })  
 
@@ -108,6 +109,10 @@ const functionByMsgCode = {
   
   'end' : (msg) => {
     document.querySelector('#ready').style.display = "block";
+    Object.keys(gm.players).map(nick => {
+      if(gm.players[nick].nick == msg.content) gm.players[nick].lose();
+      else                                  gm.players[nick].win();
+    });
     gm.init();
   },
 }

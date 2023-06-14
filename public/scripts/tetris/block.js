@@ -12,6 +12,7 @@ class Block {
       'ArrowLeft'  : () => {this.coord.j--;},
       'ArrowRight' : () => {this.coord.j++;},
       'ArrowDown'  : () => {this.coord.i++;},
+      'Down'       : () => {this.coord.i++;},
       'ArrowUp'    : () => {this.currentShapeNum++; 
                             this.currentShapeNum %= this.shapes.length;},
     }
