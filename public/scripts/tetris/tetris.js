@@ -29,14 +29,10 @@ class Tetris {
     block.move[direction]();
     for(let i=0; i<block.shapes[block.currentShapeNum].length; i++){
       for(let j=0; j<block.shapes[block.currentShapeNum][i].length; j++){
-        try {
-          if(block.shapes[block.currentShapeNum][i][j] == undefined)              continue;
-          if(block.coord.i+i<0 || block.coord.i+i>=this.stage.rows)               return true; 
-          if(block.coord.j+j<0 || block.coord.j+j>=this.stage.cols)               return true;
-          if(this.stage.cells[block.coord.i+i][block.coord.j+j].color !== AIR) return true;
-        } catch {
-          console.log('Move error');
-        }
+        if(block.shapes[block.currentShapeNum][i][j] == undefined)           continue;
+        if(block.coord.i+i<0 || block.coord.i+i>=this.stage.rows)            return true; 
+        if(block.coord.j+j<0 || block.coord.j+j>=this.stage.cols)            return true; 
+        if(this.stage.cells[block.coord.i+i][block.coord.j+j].color !== AIR) return true; 
       }
     }
     return false;
@@ -53,18 +49,14 @@ class Tetris {
     for (let i=0; i<this.stage.rows; i++){
       let sumOfAir = 0;
       for (let j=0; j<this.stage.cols; j++)
-        try {
-          if(this.stage.cells[i][j].color == AIR) sumOfAir++; 
-        } catch {
-          console.log('Line error');
-        }
+        if(this.stage.cells[i][j].color == AIR) sumOfAir++; 
       if(sumOfAir == 0)  removeLineNum.push(i)
     }
     
     if (removeLineNum.length == 0) return;
     
     removeLineNum = removeLineNum.map((e, i)=>e-i);
-    removeLineNum.map(i => this.stage.cells.splice(i))
+    removeLineNum.map(e => this.stage.cells.splice(e, 1))
     this.stage.addRows(removeLineNum.length);
     if (removeLineNum.length >=2) this.msg = removeLineNum.length;
   }
@@ -76,10 +68,10 @@ class Tetris {
   }
   start(){
     this.isAlive = true;
-    console.log('start');
     this.timer = setInterval(()=>{
       if(this.cantMoveBlock(this.block, 'ArrowDown')){
-        this.block.die(this.stage); 
+        this.block.die(this.stage);
+        this.block = null; 
         this.checkMadeLine();
         this.setBlockToTop();
       }
