@@ -62,8 +62,8 @@ document.addEventListener('keydown', (e)=>{
   }
 })  
 
-const myMsgSend = (code, direction ) =>{
-  const myMsg = { nick : $myNick.value, code : code, direction : direction }; 
+const myMsgSend = (code, content ) =>{
+  const myMsg = { nick : $myNick.value, code : code, content : content }; 
   ws.send(JSON.stringify(myMsg));
 }
 
@@ -71,11 +71,11 @@ const functionByMsgCode = {
   'attack'    : (msg) => {
     Object.keys(gm.players).map(nick => {
       if(nick != msg.nick)
-        gm.players[nick].stage.addPenaltyRows(msg.direction);
+        gm.players[nick].stage.addPenaltyRows(msg.content);
     });
   },
 
-  'direction' : (msg) => {gm.players[msg.nick].block.move[msg.direction]()},
+  'direction' : (msg) => {gm.players[msg.nick].block.move[msg.content]()},
   
   'ready'     : (msg) => {
     if(gm.players[msg.nick] !== undefined) return;
