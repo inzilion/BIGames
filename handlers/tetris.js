@@ -27,7 +27,9 @@ const functionByMsgCode = {
       }, 3000);
     }
   },  
-  'attack' : (wssTetris, ws, data) => {},
+  'attack' : (wssTetris, ws, data) => {
+    data.content = new Array(data.content).fill().map(row => new Array(10).fill().map(e=>Math.floor(Math.random()*2)));
+  },
   'direction' : (wssTetris, ws, data) => {},
   'end' : (wssTetris, ws, data) => init(),
 }

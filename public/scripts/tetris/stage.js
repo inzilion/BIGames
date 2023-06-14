@@ -15,14 +15,15 @@ class Stage {
     for(let i=0; i<n; i++)
       this.cells.unshift(new Array(this.cols).fill().map(e=>new Cell(CELL_SIZE, AIR)))
   }
-  addPenaltyRows(n){
-    for(let i=0; i<n; i++){
-      this.cells.push(new Array(this.cols).fill().map(e=>{
-        if(Math.floor(Math.random()*10)%2) return new Cell(CELL_SIZE, AIR);
-        else                               return new Cell(CELL_SIZE, '#f00');
-      }));
+  addPenaltyRows(rows){
+    rows = rows.map(row => row.map(e => {
+      if(e) return new Cell(CELL_SIZE, '#f00');
+      else  return new Cell(CELL_SIZE, AIR)
+    }))
+    rows.map(row => {
+      this.cells.push(row);
       this.cells.shift();
-    }
+    })
   }
 }
 
