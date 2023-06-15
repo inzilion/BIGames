@@ -2,6 +2,48 @@ const randomShape = require("./shapes");
 const { WebSocketServer } = require("ws");
 const wssTetris = new WebSocketServer({port : 3002});
 
+class RoomManager{
+  constructor(){
+    this.rooms = [[undefined, undefined]];
+    this.playerRoomNum = {};
+  }
+  
+  makeRoom(){
+    this.rooms.push([undefined, undefined]);
+  }
+
+  assignPlayerToRoom(ws, nick){
+    for(let i=0; i<this.rooms.length; i++)
+      for(let j=0; j<this.rooms[i].length; j++)
+        if(this.rooms[i][j] == undefined){
+          this.rooms[i][j] = ws;
+          this.playerRoomNum[nick] = [i,j];
+          return;
+        }
+    this.makeRoom();
+    this.assignPlayerToRoom(ws, nick);
+  }
+  
+  removePlayerToRoom(ws, nick){
+    const [i, j] = [...this.playerRoomNum[nick]];
+    this.rooms[i][j] = undefined;
+    delete this.playerRoomNum[nick];
+  }  
+}
+
+const rm = new RoomManager();
+// rm.makeRoom();
+// rm.assignPlayerToRoom('웹소켓1', '하하1');
+// rm.assignPlayerToRoom('웹소켓2', '하하2');
+// rm.assignPlayerToRoom('웹소켓3', '하하3');
+// rm.assignPlayerToRoom('웹소켓4', '하하4');
+// console.log(rm.rooms, rm.playerRoomNum);
+// rm.removePlayerToRoom('웹소켓1', '하하3');
+// console.log(rm.rooms, rm.playerRoomNum);
+// rm.assignPlayerToRoom('웹소켓6', '하하6');
+// console.log(rm.rooms, rm.playerRoomNum);
+
+
 const createShapesArr = () => {
   return new Array(100).fill().map(e=>randomShape());
 }
@@ -11,21 +53,15 @@ const init = () => {
   wssTetris.readyCnt = 0;
 }
 
-const room = new Array(10).fill(new Array(2).fill(undefined));
-console.log(room);
-
 init();
 
 const functionByMsgCode = {
   'ready' : (wssTetris, ws, data) => {
     data.shapesArr = wssTetris.shapesArr;
     wssTetris.readyCnt++;
-    if(wssTetris.readyCnt >= 2){
-      setTimeout(()=>{
-        for(client of wssTetris.clients)
-          client.send(JSON.stringify({code:'countDown'}));
-      }, 3000);
-    }
+    rm.assignPlayerToRoom(ws, data.nick);
+    rm.rooms[rm.playerRoomNum[data.nick][0]].includes(undefined);
+  
   },  
 
   'attack' : (wssTetris, ws, data) => {
