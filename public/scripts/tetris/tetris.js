@@ -97,7 +97,7 @@ class Tetris {
   }
   
   lose(){
-    this.showResult('Lose', '#000');
+    this.showResult('Lose', '#111');
   }
 }
 
