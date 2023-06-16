@@ -76,21 +76,6 @@ const functionByMsgCode = {
     });
   },
 
-  'direction' : (msg) => {gm.players[msg.nick].block.move[msg.content]()},
-  
-  'ready'     : (msg) => {
-    if(gm.players[msg.nick] !== undefined) return;
-    if(msg.nick === $myNick.value){  
-      gm.players[msg.nick] = new Tetris(msg.nick, ctx, {x:50, y:50});
-    }
-    else {                            
-      gm.players[msg.nick] = new Tetris(msg.nick, ctx, {x:650, y:50});
-      if(gm.isReady)
-        ws.send(JSON.stringify({nick : $myNick.value,  code : 'ready'}));
-    }
-    gm.players[msg.nick].ready(msg.shapesArr);
-  },
-  
   'countDown' : (msg) => {
     let cnt = 2;
     const countDownTimer = setInterval(() => {
@@ -107,6 +92,8 @@ const functionByMsgCode = {
     }, 1000);
   },
   
+  'direction' : (msg) => {gm.players[msg.nick].block.move[msg.content]()},
+
   'end' : (msg) => {
     document.querySelector('#ready').style.display = "block";
     Object.keys(gm.players).map(nick => {
@@ -114,6 +101,22 @@ const functionByMsgCode = {
       else                                  gm.players[nick].win();
     });
     gm.init();
+  },
+
+  'ready' : (msg) => {
+    if(gm.players[msg.nick] !== undefined) return;
+    if(msg.nick === $myNick.value){ 
+      gm.players[msg.nick] = new Tetris(msg.nick, ctx, {x:50, y:50});
+      gm.players[msg.nick].ready(msg.shapesArr);
+    }
+  },
+
+  'readyEnemy' : (msg) => {
+    if(gm.players[msg.nick] !== undefined) return;
+    if(msg.nick !== $myNick.value){ 
+      gm.players[msg.nick] = new Tetris(msg.nick, ctx, {x:650, y:50});
+      gm.players[msg.nick].ready(msg.shapesArr);
+    }
   },
 }
 
@@ -131,3 +134,7 @@ window.ready = () => {
 }
 
 ws.onmessage = receiveMsg;
+
+window.addEventListener('beforeunload', (event) => {
+  ws.send(JSON.stringify({nick : $myNick.value,  code : 'end'}))
+});

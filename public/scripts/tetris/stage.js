@@ -19,7 +19,7 @@ class Stage {
   }
 
   addPenaltyRows(rows){
-    penaltyRows = rows.map(row => row.map(e => {
+    const penaltyRows = rows.map(row => row.map(e => {
       if(e) return new Cell(CELL_SIZE, '#f00');
       else  return new Cell(CELL_SIZE, AIR)
     }))

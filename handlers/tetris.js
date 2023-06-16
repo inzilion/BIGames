@@ -5,7 +5,7 @@ const wssTetris = new WebSocketServer({port : 3002});
 class RoomManager{
   constructor(){
     this.rooms = [[undefined, undefined]];
-    this.playerRoomNum = {};
+    this.playerRoomAndWs = {};
   }
   
   makeRoom(){
@@ -13,21 +13,26 @@ class RoomManager{
   }
 
   assignPlayerToRoom(ws, nick){
+    if(this.playerRoomAndWs[nick]) return this.playerRoomAndWs[nick].roomNum[0];
     for(let i=0; i<this.rooms.length; i++)
       for(let j=0; j<this.rooms[i].length; j++)
         if(this.rooms[i][j] == undefined){
-          this.rooms[i][j] = ws;
-          this.playerRoomNum[nick] = [i,j];
-          return;
+          this.rooms[i][j] = nick;
+          this.playerRoomAndWs[nick] = {roomNum : [i, j], ws : ws};
+          return i;
         }
     this.makeRoom();
     this.assignPlayerToRoom(ws, nick);
   }
-  
-  removePlayerToRoom(ws, nick){
-    const [i, j] = [...this.playerRoomNum[nick]];
-    this.rooms[i][j] = undefined;
-    delete this.playerRoomNum[nick];
+
+  removePlayerToRoom(nick){
+    try{
+      const [i, j] = [...this.playerRoomAndWs[nick].roomNum];
+      this.rooms[i][j] = undefined;
+      delete this.playerRoomNum[nick];
+    } catch {
+      console.log('아직 방을 배정 받지 않은 사용자가 페이지를 나갔습니다.');
+    }
   }  
 }
 
@@ -59,9 +64,16 @@ const functionByMsgCode = {
   'ready' : (wssTetris, ws, data) => {
     data.shapesArr = wssTetris.shapesArr;
     wssTetris.readyCnt++;
-    rm.assignPlayerToRoom(ws, data.nick);
-    rm.rooms[rm.playerRoomNum[data.nick][0]].includes(undefined);
-  
+    const roomNum  = rm.assignPlayerToRoom(ws, data.nick);
+    console.log(roomNum);
+    if( rm.rooms[roomNum][0] != undefined && rm.rooms[roomNum][1] != undefined){
+      const [nick1, nick2] = [...rm.rooms[roomNum]];
+      rm.playerRoomAndWs[nick1].ws.send(JSON.stringify({nick : nick2, code : 'readyEnemy', shapesArr : data.shapesArr})); 
+      rm.playerRoomAndWs[nick2].ws.send(JSON.stringify({nick : nick1, code : 'readyEnemy', shapesArr : data.shapesArr})); 
+      setTimeout(() => {
+        rm.rooms[roomNum].map(nick => rm.playerRoomAndWs[nick].ws.send(JSON.stringify({ nick : nick , code : 'countDown'})))
+      }, 2000);
+    }
   },  
 
   'attack' : (wssTetris, ws, data) => {
@@ -69,7 +81,10 @@ const functionByMsgCode = {
   },
 
   'direction' : (wssTetris, ws, data) => {},
-  'end' : (wssTetris, ws, data) => init(),
+  'end' : (wssTetris, ws, data) => {
+    rm.removePlayerToRoom(data.nick);
+    init();
+  }
 }
 
 wssTetris.on("connection", (ws) =>{
@@ -82,13 +97,16 @@ wssTetris.on("connection", (ws) =>{
 
   ws.on("message", data =>{
     const dataJson = JSON.parse(data);
+    console.log(dataJson, wssTetris.readyCnt);
     
     functionByMsgCode[dataJson.code](wssTetris, ws, dataJson);
-
-    console.log(dataJson, wssTetris.readyCnt);
-
-    for(client of wssTetris.clients){
-      client.send(JSON.stringify(dataJson));
+    try {
+      const roomNum  = rm.playerRoomAndWs[dataJson.nick].roomNum[0];
+      rm.rooms[roomNum].map(nick => {
+        if(nick) rm.playerRoomAndWs[nick].ws.send(JSON.stringify(dataJson))
+      });
+    } catch {
+      console.log('아직 방을 배정 받지 않은 사용자가 메시지를 보내고 있음');
     }
   });
 });  
