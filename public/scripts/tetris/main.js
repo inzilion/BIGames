@@ -44,8 +44,7 @@ class GameManager {
   }
   gameEnd(nick){
     myMsgSend('end', nick);
-    clearInterval(this.timer);
-    Object.keys(this.players).map(nick => this.players[nick].end())    
+    clearInterval(this.timer); 
   }
 }
 
@@ -98,8 +97,8 @@ const functionByMsgCode = {
     document.querySelector('#ready').style.display = "block";
     Object.keys(gm.players).map(nick => {
       if(gm.players[nick].nick == msg.content) gm.players[nick].lose();
-      else                                  gm.players[nick].win();
-    });
+      else                                     gm.players[nick].win();
+    });  
     gm.init();
   },
 
@@ -136,5 +135,6 @@ window.ready = () => {
 ws.onmessage = receiveMsg;
 
 window.addEventListener('beforeunload', (event) => {
-  ws.send(JSON.stringify({nick : $myNick.value,  code : 'end'}))
+  ws.send(JSON.stringify({nick : $myNick.value,  code : 'end', content : $myNick.value}))
+  gm.init();
 });

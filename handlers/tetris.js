@@ -19,10 +19,11 @@ class RoomManager{
         if(this.rooms[i][j] == undefined){
           this.rooms[i][j] = nick;
           this.playerRoomAndWs[nick] = {roomNum : [i, j], ws : ws};
+          console.log(i,j);
           return i;
         }
     this.makeRoom();
-    this.assignPlayerToRoom(ws, nick);
+    return this.assignPlayerToRoom(ws, nick);
   }
 
   removePlayerToRoom(nick){
@@ -55,7 +56,6 @@ const createShapesArr = () => {
 
 const init = () => {
   wssTetris.shapesArr = createShapesArr();
-  wssTetris.readyCnt = 0;
 }
 
 init();
@@ -63,18 +63,22 @@ init();
 const functionByMsgCode = {
   'ready' : (wssTetris, ws, data) => {
     data.shapesArr = wssTetris.shapesArr;
-    wssTetris.readyCnt++;
     const roomNum  = rm.assignPlayerToRoom(ws, data.nick);
-    console.log(roomNum);
+    console.log(rm.rooms);
+
     if( rm.rooms[roomNum][0] != undefined && rm.rooms[roomNum][1] != undefined){
       const [nick1, nick2] = [...rm.rooms[roomNum]];
       rm.playerRoomAndWs[nick1].ws.send(JSON.stringify({nick : nick2, code : 'readyEnemy', shapesArr : data.shapesArr})); 
       rm.playerRoomAndWs[nick2].ws.send(JSON.stringify({nick : nick1, code : 'readyEnemy', shapesArr : data.shapesArr})); 
       setTimeout(() => {
-        rm.rooms[roomNum].map(nick => rm.playerRoomAndWs[nick].ws.send(JSON.stringify({ nick : nick , code : 'countDown'})))
-      }, 2000);
+        try{
+          rm.rooms[roomNum].map(nick => rm.playerRoomAndWs[nick].ws.send(JSON.stringify({ nick : nick , code : 'countDown'})))
+        } catch {
+          console.log("사용자가 방을 나갔습니다.");
+        }
+        }, 2000);
     }
-  },  
+  },   
 
   'attack' : (wssTetris, ws, data) => {
     data.content = new Array(data.content).fill().map(row => new Array(10).fill().map(e=>Math.floor(Math.random()*2)));

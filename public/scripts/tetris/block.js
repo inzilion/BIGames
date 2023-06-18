@@ -22,13 +22,9 @@ class Block {
       if(cell) cell.draw(ctx, {x:this.pos.x+(this.coord.j+j)*cell.size, y:this.pos.y+(this.coord.i+i)*cell.size})}))
   }
   die(stage){
-    this.shapes[this.currentShapeNum].map((rows, i) => rows.map((cell, j)=>{ 
+    this.shapes[this.currentShapeNum].map((row, i) => row.map((cell, j)=>{ 
       if(cell)
-        try{
           stage.cells[this.coord.i+i][this.coord.j+j].color = cell.color;
-        } catch {
-          console.log('die error');
-        }
     }))
   }
   clone(){
